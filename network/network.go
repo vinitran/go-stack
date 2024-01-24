@@ -12,17 +12,17 @@ const (
 )
 
 type StacksNetwork struct {
-	Version                        common.TransactionVersion
-	ChainID                        common.ChainID
-	BnsLookupUrl                   string
-	BroadcastEndpoint              string
-	TransferFeeEstimateEndpoint    string
-	TransactionFeeEstimateEndpoint string
-	AccountEndpoint                string
-	ContractAbiEndpoint            string
-	ReadOnlyFunctionCallEndpoint   string
-	CoreApiUrl                     string
-	FetchFn                        FetchFn
+	Version                        common.TransactionVersion `json:"version"`
+	ChainID                        common.ChainID            `json:"chain_id"`
+	BnsLookupUrl                   string                    `json:"bnsLookupUrl"`
+	BroadcastEndpoint              string                    `json:"broadcastEndpoint"`
+	TransferFeeEstimateEndpoint    string                    `json:"transferFeeEstimateEndpoint"`
+	TransactionFeeEstimateEndpoint string                    `json:"transactionFeeEstimateEndpoint"`
+	AccountEndpoint                string                    `json:"accountEndpoint"`
+	ContractAbiEndpoint            string                    `json:"contractAbiEndpoint"`
+	ReadOnlyFunctionCallEndpoint   string                    `json:"readOnlyFunctionCallEndpoint"`
+	CoreApiUrl                     string                    `json:"coreApUrl"`
+	FetchFn                        FetchFn                   `json:"fetchFn"`
 }
 
 type NetworkConfig struct {

@@ -8,17 +8,17 @@ import (
 )
 
 type SingleSigSpendingCondition struct {
-	HashMode     SingleSigHashMode
-	Signer       string
-	Nonce        *big.Int
-	Fee          *big.Int
-	KeyEncodeing PubKeyEncoding
-	Signature    MessageSignature
+	HashMode     SingleSigHashMode `json:"hashMode"`
+	Signer       string            `json:"signer"`
+	Nonce        *big.Int          `json:"nonce"`
+	Fee          *big.Int          `json:"fee"`
+	KeyEncodeing PubKeyEncoding    `json:"keyEncodeing"`
+	Signature    MessageSignature  `json:"signature"`
 }
 
 type StandardAuthorization struct {
-	AuthType          AuthType
-	SpendingCondition SingleSigSpendingCondition
+	AuthType          AuthType                   `json:"authType"`
+	SpendingCondition SingleSigSpendingCondition `json:"spendingCondition"`
 }
 
 func SerializeAuthorization(auth StandardAuthorization) ([]byte, error) {
@@ -45,23 +45,6 @@ func SerializeAuthorization(auth StandardAuthorization) ([]byte, error) {
 	return concatArray, nil
 }
 
-//export function serializeAuthorization(auth: Authorization): Uint8Array {
-//  const bytesArray = [];
-//  bytesArray.push(auth.authType);
-//
-//  switch (auth.authType) {
-//    case AuthType.Standard:
-//      bytesArray.push(serializeSpendingCondition(auth.spendingCondition));
-//      break;
-//    case AuthType.Sponsored:
-//      bytesArray.push(serializeSpendingCondition(auth.spendingCondition));
-//      bytesArray.push(serializeSpendingCondition(auth.sponsorSpendingCondition));
-//      break;
-//  }
-//
-//  return concatArray(bytesArray);
-//}
-
 func SerializeSingleSigSpendingCondition(condition SingleSigSpendingCondition) ([]byte, error) {
 	var bytesArray [][]byte
 	bytesArray = append(bytesArray, []byte{byte(condition.HashMode)})
@@ -87,10 +70,3 @@ func SerializeSingleSigSpendingCondition(condition SingleSigSpendingCondition) (
 
 	return concatArray, nil
 }
-
-//export function serializeSpendingCondition(condition: SpendingConditionOpts): Uint8Array {
-//  if (isSingleSig(condition)) {
-//    return serializeSingleSigSpendingCondition(condition);
-//  }
-//  return serializeMultiSigSpendingCondition(condition);
-//}

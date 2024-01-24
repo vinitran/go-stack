@@ -6,13 +6,13 @@ import (
 )
 
 type StacksTransaction struct {
-	Version           TransactionVersion
-	ChainId           ChainID
-	Auth              StandardAuthorization
-	AnchorMode        AnchorMode
-	Payload           TokenTransferPayload
-	PostConditionMode PostConditionMode
-	PostConditions    LengthPrefixedList
+	Version           TransactionVersion    `json:"version"`
+	ChainId           ChainID               `json:"chainId"`
+	Auth              StandardAuthorization `json:"auth"`
+	AnchorMode        AnchorMode            `json:"anchorMode"`
+	Payload           TokenTransferPayload  `json:"payload"`
+	PostConditionMode PostConditionMode     `json:"postConditionMode"`
+	PostConditions    LengthPrefixedList    `json:"postConditions"`
 }
 
 func CreateNewStacksTransaction(

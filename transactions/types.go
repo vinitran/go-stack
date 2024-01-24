@@ -99,11 +99,3 @@ func SerializeMemoString(memoString MemoString) ([]byte, error) {
 	}
 	return concatArray, nil
 }
-
-//export function serializeMemoString(memoString: MemoString): Uint8Array {
-//  const bytesArray = [];
-//  const contentBytes = utf8ToBytes(memoString.content);
-//  const paddedContent = rightPadHexToLength(bytesToHex(contentBytes), MEMO_MAX_LENGTH_BYTES * 2);
-//  bytesArray.push(hexToBytes(paddedContent));
-//  return concatArray(bytesArray);
-//}

@@ -5,10 +5,6 @@ import (
 	"go-stack/common"
 )
 
-//function bytesWithTypeID(typeId: ClarityType, bytes: Uint8Array): Uint8Array {
-//  return concatArray([typeId, bytes]);
-//}
-
 func BytesWithTypeId(typeId ClarityType, bytes []byte) ([]byte, error) {
 	var bytesArray [][]byte
 	bytesArray = append(bytesArray, []byte{byte(typeId)})
