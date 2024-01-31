@@ -1,9 +1,5 @@
 package transactions
 
-const (
-	MEMO_MAX_LENGTH_BYTES = 34
-)
-
 type AuthType byte
 
 const (
@@ -54,7 +50,9 @@ const (
 type StacksMessageType int
 
 const (
+	AddressMessageType            StacksMessageType = 0
 	MemoStringMessageType         StacksMessageType = 3
+	PublicKeyMessageType          StacksMessageType = 6
 	LengthPrefixedListMessageType StacksMessageType = 7
 	PayloadMessageType            StacksMessageType = 8
 	MessageSignatureMessageType   StacksMessageType = 9
@@ -122,3 +120,27 @@ const (
 	StringASCIIClarityType       ClarityType = 0x0d
 	StringUTF8ClarityType        ClarityType = 0x0e
 )
+
+const (
+	RECOVERABLE_ECDSA_SIG_LENGTH_BYTES int = 65
+	MEMO_MAX_LENGTH_BYTES              int = 34
+)
+
+type AnchorModeNames string
+
+const (
+	//OnChainOnlyAnchorMode  AnchorModeNames = "onChainOnly"
+	//OffChainOnlyAnchorMode AnchorModeNames = "offChainOnly"
+	AnyChainAnchorMode AnchorModeNames = "any"
+)
+
+type PeerNetworkID int
+
+const (
+	MainnetPeerNetworkID PeerNetworkID = 0x17000000
+	TestnetPeerNetworkID PeerNetworkID = 0xff000000
+)
+
+const PRIVATE_KEY_COMPRESSED_LENGTH = 33
+const PRIVATE_KEY_UNCOMPRESSED_LENGTH = 32
+const BLOCKSTACK_DEFAULT_GAIA_HUB_URL = "https://hub.blockstack.org"

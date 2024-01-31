@@ -1,7 +1,6 @@
 package transactions
 
 import (
-	"go-stack/common"
 	"math/big"
 )
 
@@ -32,7 +31,7 @@ func SerializeTokenTransferPayload(payload TokenTransferPayload) ([]byte, error)
 		return nil, err
 	}
 	bytesArray = append(bytesArray, recipientBytes)
-	bytesArray = append(bytesArray, common.BigIntToBytes(payload.Amount, 8))
+	bytesArray = append(bytesArray, BigIntToBytes(payload.Amount, 8))
 
 	messageBytes, err := SerializeStacksMessage(payload.Memo)
 	if err != nil {
@@ -40,9 +39,28 @@ func SerializeTokenTransferPayload(payload TokenTransferPayload) ([]byte, error)
 	}
 	bytesArray = append(bytesArray, messageBytes)
 
-	concatArray, err := common.ConcatArray(bytesArray)
+	concatArray, err := ConcatArray(bytesArray)
 	if err != nil {
 		return nil, err
 	}
 	return concatArray, nil
+}
+
+func CreateTokenTransferPayload(recipient string, amount *big.Int, memo string) (TokenTransferPayload, error) {
+	recipientAddr := CreateAddress(recipient)
+	memoData, err := CreateMemotring(memo)
+	if err != nil {
+		return TokenTransferPayload{}, err
+	}
+
+	return TokenTransferPayload{
+		Type:        PayloadMessageType,
+		PayloadType: TokenTransferPayloadType,
+		Recipient: StandardPrincipalCV{
+			Type:    PrincipalStandardClarityType,
+			Address: recipientAddr,
+		},
+		Amount: amount,
+		Memo:   memoData,
+	}, nil
 }

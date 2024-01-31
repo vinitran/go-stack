@@ -3,7 +3,6 @@ package transactions
 import (
 	"encoding/hex"
 	"fmt"
-	"go-stack/common"
 )
 
 type LengthPrefixedList struct {
@@ -35,7 +34,7 @@ func CreateLPList() LengthPrefixedList {
 
 func SerializeLPList(lpList LengthPrefixedList) ([]byte, error) {
 	var bytesArray [][]byte
-	lpDataBytes, err := hex.DecodeString(common.IntToHex(int64(len(lpList.Values)), lpList.LengthPrefixedBytes))
+	lpDataBytes, err := hex.DecodeString(IntToHex(int64(len(lpList.Values)), lpList.LengthPrefixedBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +44,7 @@ func SerializeLPList(lpList LengthPrefixedList) ([]byte, error) {
 	//    bytesArray.push(serializeStacksMessage(l));
 	//  }
 
-	concatArray, err := common.ConcatArray(bytesArray)
+	concatArray, err := ConcatArray(bytesArray)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +53,7 @@ func SerializeLPList(lpList LengthPrefixedList) ([]byte, error) {
 
 func SerializeAddress(address Address) ([]byte, error) {
 	var bytesArray [][]byte
-	versionBytes, err := hex.DecodeString(common.IntToHex(int64(address.Version), 1))
+	versionBytes, err := hex.DecodeString(IntToHex(int64(address.Version), 1))
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +65,7 @@ func SerializeAddress(address Address) ([]byte, error) {
 	}
 	bytesArray = append(bytesArray, hash160Bytes)
 
-	concatArray, err := common.ConcatArray(bytesArray)
+	concatArray, err := ConcatArray(bytesArray)
 	if err != nil {
 		return nil, err
 	}
@@ -93,9 +92,44 @@ func SerializeMemoString(memoString MemoString) ([]byte, error) {
 	}
 	bytesArray = append(bytesArray, paddedContentBytes)
 
-	concatArray, err := common.ConcatArray(bytesArray)
+	concatArray, err := ConcatArray(bytesArray)
 	if err != nil {
 		return nil, err
 	}
 	return concatArray, nil
+}
+
+func AddressFromPublicKeys(version AddressVersion, hashMode AddressHashMode, numSigs int, publicKeys []StacksPublicKey) (Address, error) {
+	if len(publicKeys) == 0 {
+		return Address{}, fmt.Errorf("invalid number of public keys")
+	}
+
+	if hashMode == SerializeP2PKH || hashMode == SerializeP2WPKH {
+		if len(publicKeys) != 1 || numSigs != 1 {
+			return Address{}, fmt.Errorf("invalid number of public keys or signatures")
+		}
+	}
+
+	//if hashMode == SerializeP2WPKH || hashMode == SerializeP2WSH {
+	//	if len(publicKeys) != 1 || numSigs != 1 {
+	//		return Address{}, fmt.Errorf("invalid number of public keys or signatures")
+	//	}
+	//}
+
+	switch hashMode {
+	case SerializeP2PKH:
+		return AddressFromVersionHash(version, HashP2PKH(publicKeys[0].Data.SerializeUncompressed())), nil
+	default:
+		return Address{}, fmt.Errorf("invalid hashmode")
+	}
+}
+
+func CreateMemotring(content string) (MemoString, error) {
+	if ExceedsMaxLengthBytes(content, MEMO_MAX_LENGTH_BYTES) {
+		return MemoString{}, fmt.Errorf("memo exceeds maximum length of %d bytes", MEMO_MAX_LENGTH_BYTES)
+	}
+	return MemoString{
+		Type:    MemoStringMessageType,
+		Content: content,
+	}, nil
 }

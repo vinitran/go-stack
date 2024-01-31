@@ -1,8 +1,7 @@
 package transactions
 
 import (
-	"go-stack/common"
-	"log"
+	"math/big"
 )
 
 type StacksTransaction struct {
@@ -35,12 +34,20 @@ func CreateNewStacksTransaction(
 	}
 }
 
-func (s StacksTransaction) serialize() ([]byte, error) {
+func (s *StacksTransaction) SetFee(fee *big.Int) {
+	s.Auth.SetFee(fee)
+}
+
+func (s *StacksTransaction) SetNonce(nonce *big.Int) {
+	s.Auth.SetNonce(nonce)
+}
+
+func (s StacksTransaction) Serialize() ([]byte, error) {
 	var bytesArray [][]byte
 	bytesArray = append(bytesArray, []byte{byte(s.Version)})
 
 	chainIdBytes := make([]byte, 4)
-	common.WriteUInt32BE(&chainIdBytes, uint32(s.ChainId), 0)
+	WriteUInt32BE(&chainIdBytes, uint32(s.ChainId), 0)
 	bytesArray = append(bytesArray, chainIdBytes)
 
 	authByte, err := SerializeAuthorization(s.Auth)
@@ -54,7 +61,6 @@ func (s StacksTransaction) serialize() ([]byte, error) {
 
 	postConditionBytes, err := SerializeLPList(s.PostConditions)
 	if err != nil {
-		log.Println(2)
 		return nil, err
 	}
 	bytesArray = append(bytesArray, postConditionBytes)
@@ -64,11 +70,38 @@ func (s StacksTransaction) serialize() ([]byte, error) {
 		return nil, err
 	}
 	bytesArray = append(bytesArray, payloadBytes)
-	concatArray, err := common.ConcatArray(bytesArray)
+	concatArray, err := ConcatArray(bytesArray)
 	if err != nil {
-		log.Println(3)
 		return nil, err
 	}
 
 	return concatArray, nil
+}
+
+func (s StacksTransaction) Txid() (string, error) {
+	serialized, err := s.Serialize()
+	if err != nil {
+		return "", err
+	}
+	return TxidFromData(serialized), nil
+}
+
+func (s StacksTransaction) SignBegin() (string, error) {
+	tx := s
+	auth, err := IntoInitialSighashAuth(tx.Auth)
+	if err != nil {
+		return "", err
+	}
+	tx.Auth = auth
+	return tx.Txid()
+}
+
+func (s *StacksTransaction) SignNextOrigin(sigHash string, privateKey StacksPrivateKey) (string, error) {
+	nextSig, nextSigHash, err := NextSignature(sigHash, s.Auth.AuthType, s.Auth.SpendingCondition.Fee, s.Auth.SpendingCondition.Nonce, privateKey)
+	if err != nil {
+		return "", err
+	}
+
+	s.Auth.SpendingCondition.Signature = nextSig
+	return nextSigHash, nil
 }

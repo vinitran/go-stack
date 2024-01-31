@@ -45,7 +45,7 @@ func TestSerializeTransaction(t *testing.T) {
 		},
 	)
 
-	serializeTxBytes, err := tx.serialize()
+	serializeTxBytes, err := tx.Serialize()
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -2,7 +2,6 @@ package transactions
 
 import (
 	"fmt"
-	"go-stack/common"
 )
 
 func BytesWithTypeId(typeId ClarityType, bytes []byte) ([]byte, error) {
@@ -10,7 +9,7 @@ func BytesWithTypeId(typeId ClarityType, bytes []byte) ([]byte, error) {
 	bytesArray = append(bytesArray, []byte{byte(typeId)})
 	bytesArray = append(bytesArray, bytes)
 
-	concatArray, err := common.ConcatArray(bytesArray)
+	concatArray, err := ConcatArray(bytesArray)
 	if err != nil {
 		return nil, err
 	}

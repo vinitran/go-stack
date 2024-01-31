@@ -1,4 +1,4 @@
-package common
+package transactions
 
 func Equals(a, b []byte) bool {
 	if len(a) != len(b) {
